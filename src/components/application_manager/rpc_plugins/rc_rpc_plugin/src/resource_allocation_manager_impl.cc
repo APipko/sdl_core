@@ -23,7 +23,8 @@ ResourceAllocationManagerImpl::ResourceAllocationManagerImpl(
     application_manager::rpc_service::RPCService& rpc_service)
     : current_access_mode_(hmi_apis::Common_RCAccessMode::AUTO_ALLOW)
     , app_mngr_(app_mngr)
-    , rpc_service_(rpc_service) {}
+    , rpc_service_(rpc_service)
+    , is_rc_enabled_(true) {}
 
 ResourceAllocationManagerImpl::~ResourceAllocationManagerImpl() {}
 
@@ -281,6 +282,14 @@ void ResourceAllocationManagerImpl::SendOnRCStatusNotification() {
     auto to_HMI = CreateOnRCStatusNotificationToHmi(rc_app->hmi_app_id());
     rpc_service_.SendMessageToHMI(to_HMI);
   }
+}
+
+bool ResourceAllocationManagerImpl::is_rc_enabled() const {
+  return is_rc_enabled_;
+}
+
+void ResourceAllocationManagerImpl::set_rc_enabled(const bool value) {
+  is_rc_enabled_ = value;
 }
 
 void ResourceAllocationManagerImpl::SetResourceFree(
