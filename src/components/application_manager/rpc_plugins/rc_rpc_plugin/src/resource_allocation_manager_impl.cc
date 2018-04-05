@@ -144,6 +144,7 @@ void ResourceAllocationManagerImpl::ProcessApplicationPolicyUpdate() {
       if (rc_extention) {
         rc_extention->UnsubscribeFromInteriorVehicleData(*module);
       }
+      SendOnRCStatusNotification();
     }
   }
 }
@@ -298,7 +299,6 @@ void ResourceAllocationManagerImpl::SetResourceFree(
   }
   allocated_resources_.erase(allocation);
   LOG4CXX_DEBUG(logger_, "Resource " << module_type << " is released.");
-  SendOnRCStatusNotification();
 }
 
 std::vector<std::string>
@@ -444,7 +444,9 @@ void ResourceAllocationManagerImpl::OnApplicationEvent(
     for (; acquired_modules.end() != module; ++module) {
       ReleaseResource(*module, application->app_id());
     }
-
+    if (!acquired_modules.empty()) {
+      SendOnRCStatusNotification();
+    }
     Apps app_list;
     app_list.push_back(application);
     RemoveAppsSubscriptions(app_list);
