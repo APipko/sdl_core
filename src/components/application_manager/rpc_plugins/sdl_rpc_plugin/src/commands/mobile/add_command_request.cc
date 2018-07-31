@@ -160,8 +160,8 @@ void AddCommandRequest::Run() {
     return;
   }
 
-  app->AddCommand((*message_)[strings::msg_params][strings::cmd_id].asUInt(),
-                  (*message_)[strings::msg_params]);
+  const uint32_t internal_consecutive_number = CalcAppInternalConsecutiveNumber(app);
+  app->AddCommand(internal_consecutive_number, (*message_)[strings::msg_params]);
 
   smart_objects::SmartObject ui_msg_params =
       smart_objects::SmartObject(smart_objects::SmartType_Map);
@@ -512,6 +512,21 @@ void AddCommandRequest::on_event(const event_engine::Event& event) {
                result_code,
                info.empty() ? NULL : info.c_str(),
                &(message[strings::msg_params]));
+}
+
+uint32_t AddCommandRequest::CalcAppInternalConsecutiveNumber(
+    ApplicationConstSharedPtr app) {
+  LOG4CXX_AUTO_TRACE(logger_);
+  const DataAccessor<CommandsMap> accessor = app->commands_map();
+  const CommandsMap& commands = accessor.GetData();
+
+  uint32_t last_command_number = 0;
+  if (!commands.empty()) {
+    CommandsMap::const_reverse_iterator commands_it = commands.rbegin();
+    last_command_number = commands_it->first;
+  }
+
+  return last_command_number + 1;
 }
 
 bool AddCommandRequest::IsPendingResponseExist() {

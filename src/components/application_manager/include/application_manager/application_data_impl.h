@@ -119,18 +119,19 @@ class DynamicApplicationDataImpl : public virtual Application {
   /*
    * @brief Adds a command to the in application menu
    */
-  void AddCommand(uint32_t cmd_id, const smart_objects::SmartObject& command);
+  void AddCommand(const uint32_t internal_id,
+                  const smart_objects::SmartObject& command);
 
   /*
    * @brief Deletes all commands from the application menu with the specified
    * command id
    */
-  void RemoveCommand(uint32_t cmd_id);
+  void RemoveCommand(const uint32_t cmd_id);
 
   /*
    * @brief Finds command with the specified command id
    */
-  smart_objects::SmartObject* FindCommand(uint32_t cmd_id);
+  smart_objects::SmartObject* FindCommand(const uint32_t cmd_id);
 
   /*
    * @brief Adds a menu to the application
